@@ -34,6 +34,13 @@ x1 = x.reshape(-1)
 print(f"The Rshaped array :\n {x}   {x1}\n")
 
 
+
+## There are alot of functions for changing the shape of the array in nump.
+## flatten , reval and rearranging the element rot90 , flip , fliplr, filped.
+## They are also actualy comes under advanced numpy 
+
+
+
  
 
  
