@@ -45,3 +45,7 @@ join_with_dict = join.withColumn(
 
 display(join_with_dict.select("EmployeeID", "SelectedData"))
 
+
+# COMMAND ----------
+
+
