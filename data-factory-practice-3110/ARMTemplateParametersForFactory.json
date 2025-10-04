@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "data-factory-practice-3110"
+		},
+		"Linked_Service_ADLS_accountKey": {
+			"value": ""
+		},
+		"Azure_data_factory_KeyValut_properties_typeProperties_baseUrl": {
+			"value": "https://local-data-factory-3110.vault.azure.net/"
+		},
+		"Linked_Service_ADLS_properties_typeProperties_url": {
+			"value": "https://surajpandey311000.dfs.core.windows.net/"
+		},
+		"Local_Sql_Server_Suraj_properties_typeProperties_server": {
+			"value": "SurajPandey\\SQLEXPRESS"
+		},
+		"Local_Sql_Server_Suraj_properties_typeProperties_database": {
+			"value": "AdventureWorksLT2022"
+		},
+		"Local_Sql_Server_Suraj_properties_typeProperties_userName": {
+			"value": "suraj"
+		},
+		"Get_Customer_Based_On_WaterMark_properties_Incremental Customer Load with Watermarking_parameters_setup_id": {
+			"value": "1001"
+		}
+	}
+}

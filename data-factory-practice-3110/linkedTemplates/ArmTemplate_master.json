@@ -1,0 +1,91 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "data-factory-practice-3110"
+		},
+		"Linked_Service_ADLS_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'Linked_Service_ADLS'"
+		},
+		"Azure_data_factory_KeyValut_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://local-data-factory-3110.vault.azure.net/"
+		},
+		"Linked_Service_ADLS_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://surajpandey311000.dfs.core.windows.net/"
+		},
+		"Local_Sql_Server_Suraj_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "SurajPandey\\SQLEXPRESS"
+		},
+		"Local_Sql_Server_Suraj_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "AdventureWorksLT2022"
+		},
+		"Local_Sql_Server_Suraj_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "suraj"
+		},
+		"Get_Customer_Based_On_WaterMark_properties_Incremental Customer Load with Watermarking_parameters_setup_id": {
+			"type": "string",
+			"defaultValue": "1001"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "data-factory-practice-3110_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"Linked_Service_ADLS_accountKey": {
+						"value": "[parameters('Linked_Service_ADLS_accountKey')]"
+					},
+					"Azure_data_factory_KeyValut_properties_typeProperties_baseUrl": {
+						"value": "[parameters('Azure_data_factory_KeyValut_properties_typeProperties_baseUrl')]"
+					},
+					"Linked_Service_ADLS_properties_typeProperties_url": {
+						"value": "[parameters('Linked_Service_ADLS_properties_typeProperties_url')]"
+					},
+					"Local_Sql_Server_Suraj_properties_typeProperties_server": {
+						"value": "[parameters('Local_Sql_Server_Suraj_properties_typeProperties_server')]"
+					},
+					"Local_Sql_Server_Suraj_properties_typeProperties_database": {
+						"value": "[parameters('Local_Sql_Server_Suraj_properties_typeProperties_database')]"
+					},
+					"Local_Sql_Server_Suraj_properties_typeProperties_userName": {
+						"value": "[parameters('Local_Sql_Server_Suraj_properties_typeProperties_userName')]"
+					},
+					"Get_Customer_Based_On_WaterMark_properties_Incremental Customer Load with Watermarking_parameters_setup_id": {
+						"value": "[parameters('Get_Customer_Based_On_WaterMark_properties_Incremental Customer Load with Watermarking_parameters_setup_id')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
