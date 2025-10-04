@@ -1,9 +1,0 @@
-{
-	"name": "data-factory-practice-3110",
-	"location": "eastus",
-	"identity": {
-		"type": "SystemAssigned",
-		"principalId": "f2e5f21e-9f5e-45b9-b856-708855e1389d",
-		"tenantId": "e24ac094-efd8-4a6b-98d5-a129b32a8c9a"
-	}
-}

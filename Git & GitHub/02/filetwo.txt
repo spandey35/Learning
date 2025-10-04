@@ -1,4 +1,0 @@
-This is my file 2 for git course
-adding more contnt to file 2
-
-2026 footer node added
