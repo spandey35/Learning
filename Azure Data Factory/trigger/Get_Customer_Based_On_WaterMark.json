@@ -1,0 +1,37 @@
+{
+	"name": "Get_Customer_Based_On_WaterMark",
+	"properties": {
+		"description": "This Trigger will get the customer data from salesLT.customer and based on the water mark value it get the records and load it into Azure blob.",
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Incremental Customer Load with Watermarking",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"setup_id": "1001"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2025-09-03T16:13:00",
+				"endTime": "2025-09-04T16:13:00",
+				"timeZone": "India Standard Time",
+				"schedule": {
+					"minutes": [
+						55
+					],
+					"hours": [
+						21
+					]
+				}
+			}
+		}
+	}
+}

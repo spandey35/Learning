@@ -1,0 +1,7 @@
+{
+	"name": "Self-Hosted-Database-Suraj",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "Local connection string for SSMS."
+	}
+}
