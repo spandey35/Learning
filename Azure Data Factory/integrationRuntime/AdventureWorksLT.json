@@ -1,0 +1,6 @@
+{
+	"name": "AdventureWorksLT",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
