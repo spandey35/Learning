@@ -1,0 +1,1468 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "data-factory-practice-3110"
+		},
+		"Linked_Service_ADLS_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'Linked_Service_ADLS'"
+		},
+		"Azure_data_factory_KeyValut_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://local-data-factory-3110.vault.azure.net/"
+		},
+		"Linked_Service_ADLS_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://surajpandey311000.dfs.core.windows.net/"
+		},
+		"Local_Sql_Server_Suraj_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "SurajPandey\\SQLEXPRESS"
+		},
+		"Local_Sql_Server_Suraj_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "AdventureWorksLT2022"
+		},
+		"Local_Sql_Server_Suraj_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "suraj"
+		},
+		"Get_Customer_Based_On_WaterMark_properties_Incremental Customer Load with Watermarking_parameters_setup_id": {
+			"type": "string",
+			"defaultValue": "1001"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Azure_data_factory_KeyValut')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('Azure_data_factory_KeyValut_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Linked_Service_ADLS')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('Linked_Service_ADLS_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('Linked_Service_ADLS_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Self-Hosted-Database-Suraj')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"description": "Local connection string for SSMS.",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Destination')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Linked_Service_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "SalesLTCustomer",
+						"folderPath": "Output",
+						"fileSystem": "practice-data-factory-cantainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "DATE",
+						"type": "String"
+					},
+					{
+						"name": "COUNTRY",
+						"type": "String"
+					},
+					{
+						"name": "PRODUCT",
+						"type": "String"
+					},
+					{
+						"name": "SALES",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Linked_Service_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/All_tables_load_loacl_ADLS_Parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Linked_Service_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"SchemaName": {
+						"type": "string"
+					},
+					"tableName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "bronze",
+						"fileSystem": "practice-data-factory-cantainer"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Linked_Service_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DataServiceCSV')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Linked_Service_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "OrdersNew.csv",
+						"folderPath": "ADF-Datasets",
+						"fileSystem": "practice-data-factory-cantainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OrderDate",
+						"type": "String"
+					},
+					{
+						"name": "ProductKey",
+						"type": "String"
+					},
+					{
+						"name": "Country",
+						"type": "String"
+					},
+					{
+						"name": "EnglishProductName",
+						"type": "String"
+					},
+					{
+						"name": "SalesAmount",
+						"type": "String"
+					},
+					{
+						"name": "TaxAmt",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Linked_Service_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DataService_CSV_OutPut')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Linked_Service_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "Output",
+						"fileSystem": "practice-data-factory-cantainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Linked_Service_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Dataset_at_folder_level')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Linked_Service_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "ADF-Datasets",
+						"fileSystem": "practice-data-factory-cantainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "DATE",
+						"type": "String"
+					},
+					{
+						"name": "COUNTRY",
+						"type": "String"
+					},
+					{
+						"name": "PRODUCT",
+						"type": "String"
+					},
+					{
+						"name": "SALES",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Linked_Service_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Local_Sql_Server_Suraj')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"server": "[parameters('Local_Sql_Server_Suraj_properties_typeProperties_server')]",
+					"database": "[parameters('Local_Sql_Server_Suraj_properties_typeProperties_database')]",
+					"encrypt": "optional",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('Local_Sql_Server_Suraj_properties_typeProperties_userName')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "Azure_data_factory_KeyValut",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "password"
+					}
+				},
+				"connectVia": {
+					"referenceName": "Self-Hosted-Database-Suraj",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/Self-Hosted-Database-Suraj')]",
+				"[concat(variables('factoryId'), '/linkedServices/Azure_data_factory_KeyValut')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/001_Pipeline_CopyData')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data with ADLS",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DataServiceCSV",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DataService_CSV_OutPut",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-09-02T07:09:07Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DataServiceCSV')]",
+				"[concat(variables('factoryId'), '/datasets/DataService_CSV_OutPut')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/002_CopyData_Full_Folder')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "ADF-Datasets",
+									"wildcardFileName": "*",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Dataset_at_folder_level",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DataService_CSV_OutPut",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-08-26T06:02:01Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Dataset_at_folder_level')]",
+				"[concat(variables('factoryId'), '/datasets/DataService_CSV_OutPut')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/003_CopyData_Specific_file')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "ADF-Datasets",
+									"wildcardFileName": "SALES*.csv",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Dataset_at_folder_level",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DataService_CSV_OutPut",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-08-26T08:18:39Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Dataset_at_folder_level')]",
+				"[concat(variables('factoryId'), '/datasets/DataService_CSV_OutPut')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/004_CopyData_Specific_file_only_csv')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "ADF-Datasets",
+									"wildcardFileName": "*.csv",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Dataset_at_folder_level",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DataService_CSV_OutPut",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-08-26T08:20:18Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Dataset_at_folder_level')]",
+				"[concat(variables('factoryId'), '/datasets/DataService_CSV_OutPut')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Local_All_tables')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Local_Sql_Server_Suraj",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "CustomerID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "NameStyle",
+						"type": "bit"
+					},
+					{
+						"name": "Title",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FirstName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MiddleName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Suffix",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CompanyName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SalesPerson",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EmailAddress",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Phone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PasswordHash",
+						"type": "varchar"
+					},
+					{
+						"name": "PasswordSalt",
+						"type": "varchar"
+					},
+					{
+						"name": "rowguid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Local_Sql_Server_Suraj')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SqlServerTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Local_Sql_Server_Suraj",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "AddressID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "AddressLine1",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AddressLine2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "City",
+						"type": "nvarchar"
+					},
+					{
+						"name": "StateProvince",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CountryRegion",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PostalCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "rowguid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "SalesLT",
+					"table": "Address"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Local_Sql_Server_Suraj')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/000_Pipeline_CopyData_from_DB_ADLS')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Copy all the files for database from local to ADLS",
+				"activities": [
+					{
+						"name": "Check_for_All_Table",
+						"description": "This task will look up for all the tables present in the on prem database.",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "select s.name as SchemaName , t.name as TableName \nfrom sys.tables t \ninner join sys.schemas s \non t.schema_id = s.schema_id\nwhere s.name = 'SalesLT'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "Local_All_tables",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Check_for_All_Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Check_for_All_Table').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlServerSource",
+											"sqlReaderQuery": {
+												"value": "@{concat('select * from ', item().schemaname, '.', item().tablename )}",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "Local_All_tables",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "All_tables_load_loacl_ADLS_Parquet",
+											"type": "DatasetReference",
+											"parameters": {
+												"SchemaName": {
+													"value": "@item().schemaname",
+													"type": "Expression"
+												},
+												"tableName": {
+													"value": "@item().tablename",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-08-26T14:20:43Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Local_All_tables')]",
+				"[concat(variables('factoryId'), '/datasets/All_tables_load_loacl_ADLS_Parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Incremental Customer Load with Watermarking')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "This Trigger will get the customer data from salesLT.customer and based on the water mark value it get the records and load it into Azure blob.",
+				"activities": [
+					{
+						"name": "If Condition",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "GET CONFIGURATION VALUE FOR MAX MODIFIED DATE",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Max Modified Date for Customer Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@greater(activity('Max Modified Date for Customer Table').output.firstRow.MaxModifiedDate,activity('GET CONFIGURATION VALUE FOR MAX MODIFIED DATE').output.firstRow.Value)",
+								"type": "Expression"
+							},
+							"ifTrueActivities": [
+								{
+									"name": "Copy data",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlServerSource",
+											"sqlReaderQuery": {
+												"value": "@concat(\n  'select * from SalesLT.Customer where ModifiedDate >= ''',\n  activity('GET CONFIGURATION VALUE FOR MAX MODIFIED DATE').output.firstRow.Value,\n  ''''\n)\n",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "Local_All_tables",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ADLS_Destination",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								},
+								{
+									"name": "Update Watermark",
+									"description": "",
+									"type": "Script",
+									"dependsOn": [
+										{
+											"activity": "Set Souce",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "Set Sink",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "Set Rows",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "Inserted Rows",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"linkedServiceName": {
+										"referenceName": "Local_Sql_Server_Suraj",
+										"type": "LinkedServiceReference"
+									},
+									"typeProperties": {
+										"scripts": [
+											{
+												"type": "Query",
+												"text": "update SalesLT.ETL_Configuration set VALUE = \nconvert(nvarchar(200),(select max(ModifiedDate) from SalesLT.Customer),121)\nwhere VALUE_CLASS='SalesLT.Customer'\n"
+											}
+										],
+										"scriptBlockExecutionTimeout": "02:00:00"
+									}
+								},
+								{
+									"name": "Set Souce",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Copy data",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "Source",
+										"value": {
+											"value": "@activity('Copy data').output.executionDetails[0].source.type",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Set Sink",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Copy data",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "Sink",
+										"value": {
+											"value": "@activity('Copy data').output.executionDetails[0].sink.type",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Update ETL Tables",
+									"type": "Script",
+									"dependsOn": [
+										{
+											"activity": "Update Watermark",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"linkedServiceName": {
+										"referenceName": "Local_Sql_Server_Suraj",
+										"type": "LinkedServiceReference"
+									},
+									"typeProperties": {
+										"scripts": [
+											{
+												"type": "Query",
+												"text": {
+													"value": "update SalesLT.ETL_LOAD_LOG \n    set \n        SOURCE_NAME = '@{variables('Source')}', \n        TARGET_NAME = '@{variables('Sink')}',\n        INPUT_ROWS  = '@{variables('InputRows')}',\n        INSERTED_ROWS = '@{variables('InsertedRows')}'\nwhere JOB_ID = '@{pipeline().RunId}'",
+													"type": "Expression"
+												}
+											}
+										],
+										"scriptBlockExecutionTimeout": "02:00:00"
+									}
+								},
+								{
+									"name": "Set Rows",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Copy data",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "InputRows",
+										"value": {
+											"value": "@activity('Copy data').output.rowsRead",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Inserted Rows",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Copy data",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "InsertedRows",
+										"value": {
+											"value": "@activity('Copy data').output.rowsCopied",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "GET CONFIGURATION VALUE FOR MAX MODIFIED DATE",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "ETL_Logging",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": {
+									"value": "@concat('Select Value from SalesLT.ETL_Configuration where VALUE_CLASS = ''SalesLT.Customer'' and SETUP_ID =' , pipeline().parameters.setup_id) ",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "Local_All_tables",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "Max Modified Date for Customer Table",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "ETL_Logging",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(200), MAX(ModifiedDate), 121) AS MaxModifiedDate\nFROM SalesLT.Customer\n",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "Local_All_tables",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "Pipeline_StartTiming",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Pipeline_StartTiming",
+							"value": {
+								"value": "@formatDateTime(pipeline().TriggerTime,'yyyy-MM-dd HH:mm:ss.fff')\n",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Pipeline_EndTiming",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "If Condition",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Pipeline_EndTiming",
+							"value": {
+								"value": "@formatDateTime(utcNow(), 'yyyy-MM-dd HH:mm:ss.fff')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ETL_Logging",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Pipeline_StartTiming",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "Local_Sql_Server_Suraj",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "INSERT INTO SalesLT.ETL_LOAD_LOG VALUES (\n    '@{pipeline().RunId}',\n    '@{pipeline().Pipeline}',\n     NULL,\n     NULL,\n    'ETL_Load_Log',\n    NULL, NULL, NULL, NULL, NULL,\n    '@{variables('Pipeline_StartTiming')}',\n    NULL,\n    'InProgress',\n    '@{pipeline().parameters.setup_id}',\n    NULL\n);\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Update ETL_Logging",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Pipeline_EndTiming",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "Local_Sql_Server_Suraj",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "update SalesLT.ETL_LOAD_LOG set END_DATE='@{variables('Pipeline_EndTiming')}' , STATUS='Completed' \nwhere JOB_ID = '@{pipeline().RunId}'",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"setup_id": {
+						"type": "string",
+						"defaultValue": "1001"
+					}
+				},
+				"variables": {
+					"LastRunDateforCustomer": {
+						"type": "String"
+					},
+					"LastModifiedDateforCustomer": {
+						"type": "String"
+					},
+					"Pipeline_StartTiming": {
+						"type": "String"
+					},
+					"Pipeline_EndTiming": {
+						"type": "String"
+					},
+					"Source": {
+						"type": "String"
+					},
+					"Sink": {
+						"type": "String"
+					},
+					"InputRows": {
+						"type": "Integer"
+					},
+					"FilePath": {
+						"type": "Integer"
+					},
+					"InsertedRows": {
+						"type": "Integer"
+					}
+				},
+				"annotations": [
+					"Suraj Pandey"
+				],
+				"lastPublishTime": "2025-09-03T16:30:52Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Local_All_tables')]",
+				"[concat(variables('factoryId'), '/linkedServices/Local_Sql_Server_Suraj')]",
+				"[concat(variables('factoryId'), '/datasets/ADLS_Destination')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Get_Customer_Based_On_WaterMark')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "This Trigger will get the customer data from salesLT.customer and based on the water mark value it get the records and load it into Azure blob.",
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Incremental Customer Load with Watermarking",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"setup_id": "[parameters('Get_Customer_Based_On_WaterMark_properties_Incremental Customer Load with Watermarking_parameters_setup_id')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2025-09-03T16:13:00",
+						"endTime": "2025-09-04T16:13:00",
+						"timeZone": "India Standard Time",
+						"schedule": {
+							"minutes": [
+								55
+							],
+							"hours": [
+								21
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Incremental Customer Load with Watermarking')]"
+			]
+		}
+	]
+}
