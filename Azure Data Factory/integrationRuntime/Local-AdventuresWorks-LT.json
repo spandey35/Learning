@@ -1,7 +1,0 @@
-{
-	"name": "Local-AdventuresWorks-LT",
-	"properties": {
-		"type": "SelfHosted",
-		"description": "This Integration runtime will connect the on prem SQL server to cloud for loading the data into ADLS gen 2 or any blob storage."
-	}
-}
