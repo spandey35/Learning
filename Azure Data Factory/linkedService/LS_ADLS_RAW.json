@@ -1,0 +1,12 @@
+{
+	"name": "LS_ADLS_RAW",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://surajpandey311000.dfs.core.windows.net/",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDAxMEYzQ0FDLUUxMjctNENENS04RDg0LTYzN0NBMUFEODU2Nl9lZDRjODQxZi0xZTdhLTRlOWItYWU0Yi02M2U3Y2QzMjQ1MTUiDQp9"
+		}
+	}
+}
