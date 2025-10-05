@@ -1,0 +1,9 @@
+{
+	"name": "data-factory-practice-3110",
+	"properties": {
+		"globalConfigurations": {
+			"PipelineBillingEnabled": "false"
+		}
+	},
+	"location": "eastus"
+}
