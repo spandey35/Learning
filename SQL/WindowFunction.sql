@@ -55,7 +55,7 @@ SELECT *
 FROM CTE;
 
 
--- 4. 
+-- 4. NTILE
 
 SELECT 
     P.ProductID,
@@ -66,7 +66,7 @@ INNER JOIN SalesLT.Product P ON A.ProductID = P.ProductID
 GROUP BY P.ProductID;
 
 
--- .5. SUM() OVER – Running Total
+-- .5. SUM() OVER ï¿½ Running Total
 
 SELECT 
     SalesOrderID,
@@ -76,7 +76,7 @@ SELECT
 FROM SalesLT.SalesOrderDetail;
 
 
--- 6. AVG() OVER – Moving Average
+-- 6. AVG() OVER Moving Average
 
 SELECT 
     ProductID,
@@ -84,7 +84,7 @@ SELECT
     AVG(UnitPrice) OVER (PARTITION BY ProductID) AS AvgUnitPriceByProduct
 FROM SalesLT.SalesOrderDetail;
 
--- 7. LEAD() – Next Row Value
+-- 7. LEAD() Next Row Value
 
 SELECT 
     SalesOrderID,
@@ -94,7 +94,7 @@ SELECT
 FROM SalesLT.SalesOrderDetail;
 
 
--- 8. LAG() – Previous Row Value
+-- 8. LAG()  Previous Row Value
 SELECT 
     SalesOrderID,
     ProductID,
