@@ -1,0 +1,23 @@
+Window Function
+================
+
+1. Rank: Assigns a ranking number to each row within a partition based on the ORDER BY clause. If duplicate values exist, they receive the same rank, and the next rank is skipped.
+	Ex: Values: 100, 90, 90, 80 --> RANK(): 1, 2, 2, 4
+ 
+2. DenseRank: Assigns a ranking number to each row within a partition based on ORDER BY. If duplicate values exist, they receive the same rank, but no ranks are skipped. 
+	Ex: Values: 100, 90, 90, 80 --> DENSE_RANK(): 1, 2, 2, 3
+
+3. RowCount: Assigns a unique sequential number to each row within a partition, even if values are the same.
+	Ex: Values: 100, 90, 90, 80 --> ROW_NUMBER(): 1, 2, 3, 4
+
+4. LAG(): Accesses the value from a previous row within the same partition.
+
+5. LEAD(): Accesses the value from a next row within the same partition.
+
+6. SUM() OVER() : Running totals or partition-level totals without GROUP BY.
+
+7. NTILE(n): Divides rows into n equal buckets.
+
+
+
+
