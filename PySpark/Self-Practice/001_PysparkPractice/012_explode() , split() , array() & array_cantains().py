@@ -18,6 +18,7 @@ df.printSchema()
 df.show(truncate=False)
 df1=df.withColumn("New-Skills",explode(col("Skills")))
 df1.show(truncate=False)
+display(df1)
 
 
 # COMMAND ----------
