@@ -7,33 +7,61 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "data-factory-practice-3110"
 		},
-		"Linked_Service_ADLS_accountKey": {
+		"Dynamic_AzureDataLakeStorage_accountKey": {
 			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'Linked_Service_ADLS'"
+			"metadata": "Secure string for 'accountKey' of 'Dynamic_AzureDataLakeStorage'"
 		},
 		"Azure_data_factory_KeyValut_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://local-data-factory-3110.vault.azure.net/"
 		},
-		"Linked_Service_ADLS_properties_typeProperties_url": {
+		"Dynamic_AzureDataLakeStorage_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://surajpandey311000.dfs.core.windows.net/"
 		},
-		"Local_Sql_Server_Suraj_properties_typeProperties_server": {
+		"Self_Hosted_Dynamic_Linked_Service_Database_Suraj_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().ServerName}"
+		},
+		"Self_Hosted_Dynamic_Linked_Service_Database_Suraj_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DBName}"
+		},
+		"Self_Hosted_Dynamic_Linked_Service_Database_Suraj_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "@{linkedService().UserName}"
+		},
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_ServerName": {
 			"type": "string",
 			"defaultValue": "SurajPandey\\SQLEXPRESS"
 		},
-		"Local_Sql_Server_Suraj_properties_typeProperties_database": {
-			"type": "string",
-			"defaultValue": "AdventureWorksLT2022"
-		},
-		"Local_Sql_Server_Suraj_properties_typeProperties_userName": {
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_UserName": {
 			"type": "string",
 			"defaultValue": "suraj"
 		},
-		"Get_Customer_Based_On_WaterMark_properties_Incremental Customer Load with Watermarking_parameters_setup_id": {
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_DBName": {
 			"type": "string",
-			"defaultValue": "1001"
+			"defaultValue": "AdventureWorksLT2022"
+		},
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_SchemaName": {
+			"type": "string",
+			"defaultValue": "SalesLT"
+		},
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_TableName": {
+			"type": "string",
+			"defaultValue": "Address"
+		},
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_CantainerName": {
+			"type": "string",
+			"defaultValue": "practice-data-factory-cantainer"
+		},
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_FolderName": {
+			"type": "string",
+			"defaultValue": "Test"
+		},
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_FileName": {
+			"type": "string",
+			"defaultValue": "Test3"
 		},
 		"containerUri": {
 			"type": "string",
@@ -62,26 +90,47 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"Linked_Service_ADLS_accountKey": {
-						"value": "[parameters('Linked_Service_ADLS_accountKey')]"
+					"Dynamic_AzureDataLakeStorage_accountKey": {
+						"value": "[parameters('Dynamic_AzureDataLakeStorage_accountKey')]"
 					},
 					"Azure_data_factory_KeyValut_properties_typeProperties_baseUrl": {
 						"value": "[parameters('Azure_data_factory_KeyValut_properties_typeProperties_baseUrl')]"
 					},
-					"Linked_Service_ADLS_properties_typeProperties_url": {
-						"value": "[parameters('Linked_Service_ADLS_properties_typeProperties_url')]"
+					"Dynamic_AzureDataLakeStorage_properties_typeProperties_url": {
+						"value": "[parameters('Dynamic_AzureDataLakeStorage_properties_typeProperties_url')]"
 					},
-					"Local_Sql_Server_Suraj_properties_typeProperties_server": {
-						"value": "[parameters('Local_Sql_Server_Suraj_properties_typeProperties_server')]"
+					"Self_Hosted_Dynamic_Linked_Service_Database_Suraj_properties_typeProperties_server": {
+						"value": "[parameters('Self_Hosted_Dynamic_Linked_Service_Database_Suraj_properties_typeProperties_server')]"
 					},
-					"Local_Sql_Server_Suraj_properties_typeProperties_database": {
-						"value": "[parameters('Local_Sql_Server_Suraj_properties_typeProperties_database')]"
+					"Self_Hosted_Dynamic_Linked_Service_Database_Suraj_properties_typeProperties_database": {
+						"value": "[parameters('Self_Hosted_Dynamic_Linked_Service_Database_Suraj_properties_typeProperties_database')]"
 					},
-					"Local_Sql_Server_Suraj_properties_typeProperties_userName": {
-						"value": "[parameters('Local_Sql_Server_Suraj_properties_typeProperties_userName')]"
+					"Self_Hosted_Dynamic_Linked_Service_Database_Suraj_properties_typeProperties_userName": {
+						"value": "[parameters('Self_Hosted_Dynamic_Linked_Service_Database_Suraj_properties_typeProperties_userName')]"
 					},
-					"Get_Customer_Based_On_WaterMark_properties_Incremental Customer Load with Watermarking_parameters_setup_id": {
-						"value": "[parameters('Get_Customer_Based_On_WaterMark_properties_Incremental Customer Load with Watermarking_parameters_setup_id')]"
+					"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_ServerName": {
+						"value": "[parameters('SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_ServerName')]"
+					},
+					"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_UserName": {
+						"value": "[parameters('SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_UserName')]"
+					},
+					"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_DBName": {
+						"value": "[parameters('SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_DBName')]"
+					},
+					"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_SchemaName": {
+						"value": "[parameters('SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_SchemaName')]"
+					},
+					"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_TableName": {
+						"value": "[parameters('SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_TableName')]"
+					},
+					"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_CantainerName": {
+						"value": "[parameters('SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_CantainerName')]"
+					},
+					"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_FolderName": {
+						"value": "[parameters('SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_FolderName')]"
+					},
+					"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_FileName": {
+						"value": "[parameters('SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_FileName')]"
 					}
 				}
 			},

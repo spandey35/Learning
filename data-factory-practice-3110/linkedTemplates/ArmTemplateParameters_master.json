@@ -5,26 +5,47 @@
 		"factoryName": {
 			"value": "data-factory-practice-3110"
 		},
-		"Linked_Service_ADLS_accountKey": {
+		"Dynamic_AzureDataLakeStorage_accountKey": {
 			"value": ""
 		},
 		"Azure_data_factory_KeyValut_properties_typeProperties_baseUrl": {
 			"value": "https://local-data-factory-3110.vault.azure.net/"
 		},
-		"Linked_Service_ADLS_properties_typeProperties_url": {
+		"Dynamic_AzureDataLakeStorage_properties_typeProperties_url": {
 			"value": "https://surajpandey311000.dfs.core.windows.net/"
 		},
-		"Local_Sql_Server_Suraj_properties_typeProperties_server": {
+		"Self_Hosted_Dynamic_Linked_Service_Database_Suraj_properties_typeProperties_server": {
+			"value": "@{linkedService().ServerName}"
+		},
+		"Self_Hosted_Dynamic_Linked_Service_Database_Suraj_properties_typeProperties_database": {
+			"value": "@{linkedService().DBName}"
+		},
+		"Self_Hosted_Dynamic_Linked_Service_Database_Suraj_properties_typeProperties_userName": {
+			"value": "@{linkedService().UserName}"
+		},
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_ServerName": {
 			"value": "SurajPandey\\SQLEXPRESS"
 		},
-		"Local_Sql_Server_Suraj_properties_typeProperties_database": {
-			"value": "AdventureWorksLT2022"
-		},
-		"Local_Sql_Server_Suraj_properties_typeProperties_userName": {
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_UserName": {
 			"value": "suraj"
 		},
-		"Get_Customer_Based_On_WaterMark_properties_Incremental Customer Load with Watermarking_parameters_setup_id": {
-			"value": "1001"
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_DBName": {
+			"value": "AdventureWorksLT2022"
+		},
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_SchemaName": {
+			"value": "SalesLT"
+		},
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_TableName": {
+			"value": "Address"
+		},
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_CantainerName": {
+			"value": "practice-data-factory-cantainer"
+		},
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_FolderName": {
+			"value": "Test"
+		},
+		"SchduledTrigger_properties_0001_CopyDate_SQL_DataLake_parameters_FileName": {
+			"value": "Test3"
 		},
 		"containerUri": {
 			"value": ""
