@@ -1,0 +1,57 @@
+{
+	"name": "Dynamic_Self_Hosted_DataSet_All_Tables",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Self_Hosted_Dynamic_Linked_Service_Database_Suraj",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ServerName": {
+					"value": "@dataset().ServerName",
+					"type": "Expression"
+				},
+				"DBName": {
+					"value": "@dataset().DBName",
+					"type": "Expression"
+				},
+				"UserName": {
+					"value": "@dataset().UserName",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"DBName": {
+				"type": "string"
+			},
+			"SchemaName": {
+				"type": "string"
+			},
+			"TableName": {
+				"type": "string"
+			},
+			"ServerName": {
+				"type": "string"
+			},
+			"UserName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Self-Practice_DataSets"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().SchemaName",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().TableName",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

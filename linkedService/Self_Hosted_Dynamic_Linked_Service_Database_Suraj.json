@@ -1,0 +1,42 @@
+{
+	"name": "Self_Hosted_Dynamic_Linked_Service_Database_Suraj",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "Local connection string for SSMS.",
+		"parameters": {
+			"ServerName": {
+				"type": "string"
+			},
+			"DBName": {
+				"type": "string"
+			},
+			"UserName": {
+				"type": "string",
+				"defaultValue": "suraj"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "@{linkedService().ServerName}",
+			"database": "@{linkedService().DBName}",
+			"encrypt": "mandatory",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "@{linkedService().UserName}",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "Azure_data_factory_KeyValut",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "password",
+				"secretVersion": "0d6c96e2484f4684a3ae55f4ea249e32"
+			}
+		},
+		"connectVia": {
+			"referenceName": "Self-Hosted-Database-Suraj",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

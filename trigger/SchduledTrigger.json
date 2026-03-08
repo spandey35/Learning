@@ -1,0 +1,35 @@
+{
+	"name": "SchduledTrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "0001_CopyDate_SQL_DataLake",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"ServerName": "SurajPandey\\SQLEXPRESS",
+					"UserName": "suraj",
+					"DBName": "AdventureWorksLT2022",
+					"SchemaName": "SalesLT",
+					"TableName": "Address",
+					"CantainerName": "practice-data-factory-cantainer",
+					"FolderName": "Test",
+					"FileName": "Test3"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 15,
+				"startTime": "2026-03-08T11:05:00",
+				"endTime": "2026-03-09T11:30:00",
+				"timeZone": "India Standard Time"
+			}
+		}
+	}
+}

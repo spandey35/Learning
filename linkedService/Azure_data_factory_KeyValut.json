@@ -1,0 +1,11 @@
+{
+	"name": "Azure_data_factory_KeyValut",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://local-data-factory-3110.vault.azure.net/"
+		}
+	}
+}
