@@ -16,6 +16,8 @@ df.printSchema()
 ## fillna ()
 df.fillna("Unknown").show()
 
+df.fillna("Unknown",["Department"]).show()
+
 # COMMAND ----------
 
-
+##
